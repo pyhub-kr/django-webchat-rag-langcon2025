@@ -1,0 +1,17 @@
+django-pyhub-rag
+django-environ
+django-debug-toolbar
+django-extensions
+django-lifecycle
+openai
+
+# sqlite
+sqlite-vec
+numpy
+
+# postgres
+# psycopg2-binary
+# pgvector
+
+ipython
+
