@@ -1,8 +1,9 @@
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, render, redirect
 from django.urls import reverse_lazy
+from django.views.decorators.http import require_POST
 from django.views.generic import ListView, CreateView
 
-from .forms import RoomForm
+from .forms import RoomForm, MessageForm
 from .models import Room, TaxLawDocument
 
 
@@ -52,3 +53,28 @@ class TaxLawDocumentListView(ListView):
             qs = qs.none()
 
         return qs
+
+
+# POST 요청 만을 허용합니다.
+@require_POST
+def message_new(request, room_pk):
+    room = get_object_or_404(Room, pk=room_pk)
+
+    form = MessageForm(data=request.POST, files=request.FILES)
+    if form.is_valid():
+        message = form.save(commit=False)
+        message.room = room
+        message.save()
+        # 대화 목록에 기반해서 AI 응답 생성하고 데이터베이스에 저장합니다.
+        # 방금 입력된 유저 메시지가 대화 기록 마지막에 추가되어 있습니다.
+        ai_message = room.create_ai_message()
+        return redirect("chat:room_detail", pk=room_pk)
+
+    return render(
+        request,
+        "chat/message_form.html",  # 생성하지 않은 템플릿.
+        {
+            "room": room,
+            "form": form,
+        },
+    )

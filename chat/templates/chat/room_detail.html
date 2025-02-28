@@ -1,39 +1,30 @@
 {% extends "chat/base.html" %}
 
 {% block content %}
-    <div class="flex flex-col h-[calc(100vh-16rem)]">
-        <div class="bg-white rounded-lg shadow-md p-4 mb-4">
-            <h1 class="text-2xl font-bold text-gray-800">{{ room.name }}</h1>
-            <p class="text-sm text-gray-600">생성일: {{ room.created_at|date:"Y-m-d H:i" }}</p>
-        </div>
+<div class="flex flex-col h-[calc(100vh-16rem)]">
+    <div class="bg-white rounded-lg shadow-md p-4 mb-4">
+        <h1 class="text-2xl font-bold text-gray-800">{{ room.name }}</h1>
+        <p class="text-sm text-gray-600">생성일: {{ room.created_at|date:"Y-m-d H:i" }}</p>
+    </div>
 
-        <div class="flex-1 bg-gray-50 rounded-lg shadow-inner p-4 mb-4 overflow-y-auto">
-            <div class="space-y-4" id="chat-messages">
-                {% for message in message_list %}
-                    <div class="flex {% if message.is_ai %}justify-start{% else %}justify-end{% endif %}">
-                        <div class="{% if message.is_ai %}bg-white{% else %}bg-indigo-600 text-white{% endif %} rounded-lg px-4 py-2 max-w-[80%] shadow">
-                            <div class="text-sm {% if message.is_ai %}text-gray-600{% else %}text-indigo-100{% endif %} mb-1">
-                                {{ message.is_ai|yesno:"AI,You" }}
-                            </div>
-                            <p class="break-words">{{ message.content }}</p>
-                            <div class="text-xs {% if message.is_ai %}text-gray-400{% else %}text-indigo-200{% endif %} text-right mt-1">
-                                {{ message.created_at|date:"H:i" }}
-                            </div>
-                        </div>
-                    </div>
-                {% endfor %}
-            </div>
+    <div id="messages-container">
+        <div id="chat-messages">
+            {% for message in message_list %}
+                <div>[{{ message.role }}] : {{ message.content }}</div>
+            {% endfor %}
         </div>
+    </div>
 
-        <form class="flex gap-2" method="post">
-            {% csrf_token %}
-            <input type="text" name="content" required autocomplete="off"
-                class="flex-1 rounded-lg border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                placeholder="메시지를 입력하세요...">
+    <form method="post" action="{% url 'chat:message_new' room_pk=room.pk %}" novalidate>
+        {% csrf_token %}
+        <div class="flex gap-2">
+            <input type="text" name="content" required autocomplete="off" placeholder="메시지를 입력하세요..."
+                autofocus class="flex-1 bg-gray-100 rounded-lg px-4 py-2">
             <button type="submit"
                 class="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700 transition-colors duration-300">
                 전송
             </button>
-        </form>
-    </div>
+        </div>
+    </form>
+</div>
 {% endblock %}
