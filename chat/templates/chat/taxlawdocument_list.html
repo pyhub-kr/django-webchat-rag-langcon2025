@@ -1,0 +1,77 @@
+{% extends "chat/base.html" %}
+
+{% block content %}
+
+    <h2 class="text-2xl font-bold text-gray-800 mb-4">세법 해석례 질답 문서</h2>
+
+    <div class="mb-6">
+        <form method="get" action="" class="flex items-center gap-2">
+            <div class="relative mr-2">
+                <select name="document_type"
+                        class="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    <option value="tax_qa">세법 해석례 질답</option>
+                </select>
+            </div>
+            <div class="relative flex-grow">
+                <input type="text" name="query" placeholder="검색어를 입력하세요" value="{{ request.GET.query|default:'' }}"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+            </div>
+            <button type="submit"
+                    class="px-4 py-2 bg-blue-600 text-white font-medium rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors">
+                검색
+            </button>
+        </form>
+    </div>
+
+    {% if request.GET.query and not object_list %}
+        <div class="bg-yellow-50 border border-yellow-200 text-yellow-800 px-4 py-3 rounded-md mb-4">
+            검색결과가 없습니다.
+        </div>
+    {% endif %}
+
+    {% if object_list %}
+        <div class="text-sm text-gray-600 mb-4 font-medium">
+            총
+            <span class="font-semibold text-blue-600">{{ object_list|length }}</span>개의 문서가 검색되었습니다.
+        </div>
+    {% endif %}
+
+    {% for doc in object_list %}
+        <div class="bg-white shadow-md rounded-lg p-6 mb-6 border border-gray-200"
+            x-data="{ opened: false }">
+            <div class="mb-4">
+                <h3 class="text-lg font-semibold">
+                    <span class="text-gray-500">[{{ doc.page_content_obj.문서번호|default:"문서번호 없음" }}]</span>
+
+                    <button x-on:click="opened = ! opened">
+                        {{ doc.page_content_obj.제목|default:"제목 없음" }}
+                    </button>
+
+                    <small>
+                        <a href="{{ doc.metadata.url }}" class="text-blue-600 hover:underline" target="_blank">
+                            출처
+                        </a>
+                    </small>
+                </h3>
+            </div>
+
+            <div x-show="opened">
+                <table class="min-w-full divide-y divide-gray-200 mt-4">
+                    <tbody class="bg-white divide-y divide-gray-200">
+                    {% for key, value in doc.page_content_obj.items %}
+                        {% if key != "문서번호" and key != "제목" and key != "생성일시" and key != "수정일시" %}
+                            <tr class="{% cycle 'bg-gray-50' '' %}">
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/4">
+                                    {{ key }}
+                                </th>
+                                <td class="px-6 py-4 text-sm text-gray-900">{{ value }}</td>
+                            </tr>
+                        {% endif %}
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    {% endfor %}
+
+{% endblock %}
