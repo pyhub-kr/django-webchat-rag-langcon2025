@@ -9,13 +9,14 @@
 
     <div id="messages-container">
         <div id="chat-messages">
-            {% for message in message_list %}
-                <div>[{{ message.role }}] : {{ message.content }}</div>
-            {% endfor %}
+            {% include "chat/_message_list.html" with message_list=message_list only %}
         </div>
     </div>
 
-    <form method="post" action="{% url 'chat:message_new' room_pk=room.pk %}" novalidate>
+    <form hx-post="{% url 'chat:message_new' room_pk=room.pk %}"
+          hx-target="#chat-messages"
+          hx-swap="beforeend"
+          hx-on::before-request="this.reset()">
         {% csrf_token %}
         <div class="flex gap-2">
             <input type="text" name="content" required autocomplete="off" placeholder="메시지를 입력하세요..."

@@ -68,7 +68,12 @@ def message_new(request, room_pk):
         # 대화 목록에 기반해서 AI 응답 생성하고 데이터베이스에 저장합니다.
         # 방금 입력된 유저 메시지가 대화 기록 마지막에 추가되어 있습니다.
         ai_message = room.create_ai_message()
-        return redirect("chat:room_detail", pk=room_pk)
+        # return redirect("chat:room_detail", pk=room_pk)
+        return render(
+            request,
+            "chat/_message_list.html",
+            {"message_list": [message, ai_message]},
+        )
 
     return render(
         request,
