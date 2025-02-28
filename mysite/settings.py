@@ -32,6 +32,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "django_extensions",  # 하이픈(-)이 아닌 언더바(_)임에 유의
     "pyhub.rag",
+    "chat",
 ]
 
 MIDDLEWARE = [
