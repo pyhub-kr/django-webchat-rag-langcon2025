@@ -39,11 +39,22 @@ class Room(LifecycleModelMixin, models.Model):
         message_qs = self.message_set.all()
         messages = [{"role": msg.role, "content": msg.content} for msg in message_qs]
 
+        # 세법 해석례 문서 검색이 필요할 때
+        user_message = messages[-1]["content"].strip()
+        if user_message.startswith("!"):
+            user_message = user_message[1:]
+            # RAG를 원하는 모델을 사용하여 유사 문서 검색
+            doc_list = TaxLawDocument.objects.similarity_search(user_message)
+            지식 = str(doc_list)
+            system_prompt = self.system_prompt + "\n\n" + f"참고문서 : {지식}"
+        else:
+            system_prompt = self.system_prompt
+
         # AI 응답 생성
         llm = LLM(
             model="gpt-4o-mini",
             temperature=1,
-            system_prompt=self.system_prompt,
+            system_prompt=system_prompt,
             initial_messages=messages,
         )
         ai_message = llm.make_reply()
