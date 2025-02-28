@@ -4,6 +4,7 @@ django-debug-toolbar
 django-extensions
 django-lifecycle
 openai
+anthropic
 
 # sqlite
 sqlite-vec
@@ -14,4 +15,3 @@ numpy
 # pgvector
 
 ipython
-

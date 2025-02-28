@@ -164,3 +164,7 @@ if DEBUG:
 # 예외를 통해 필수 환경변수 로딩 여부를 명확하게 인지할 수 있습니다.
 # 필수 설정이 누락되면 애플리케이션이 구동되지 않아야 합니다.
 OPENAI_API_KEY = env.str("OPENAI_API_KEY")
+
+# Anthropic API Key
+# default 값을 지정하지 않았기에 지정 환경변수가 없더라도 예외가 발생하지 않습니다.
+ANTHROPIC_API_KEY = env.str("ANTHROPIC_API_KEY", default=None)

@@ -52,7 +52,8 @@ class Room(LifecycleModelMixin, models.Model):
 
         # AI 응답 생성
         llm = LLM(
-            model="gpt-4o-mini",
+            # model="gpt-4o-mini",
+            model="claude-3-7-sonnet-latest",
             temperature=1,
             system_prompt=system_prompt,
             initial_messages=messages,
