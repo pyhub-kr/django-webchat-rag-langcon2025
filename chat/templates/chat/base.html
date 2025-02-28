@@ -1,3 +1,5 @@
+{% load static %}
+
 <!doctype html>
 <html>
 <head>
@@ -9,6 +11,8 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/htmx.org"></script>
     <script src="https://unpkg.com/alpinejs"></script>
+    <script src="{% static 'rag/showdown/2.1.0/showdown.js' %}"></script>
+    <script src="{% static 'rag/markdown.js' %}"></script>
 </head>
 <body class="bg-gray-100">
     <div class="container mx-auto px-4 py-8">

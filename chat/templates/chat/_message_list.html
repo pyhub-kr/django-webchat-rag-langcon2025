@@ -1,4 +1,4 @@
-{# https://daisyui.com/components/chat/ #}
+{% load rag_tags %}
 
 {% for message in message_list %}
     {% if message.role == "user" %}
@@ -8,9 +8,17 @@
             </div>
         </div>
     {% else %}
+        {# uuid4 포맷의 랜덤 id 발행 #}
+        {% uuid4_id as message_id %}
+        {# 지정 id로 메시지 문자열을 json 변환 #}
+        {{ message.content|json_script:message_id }}
         <div class="chat chat-end">
-            <div class="chat-bubble">
-                {{ message.content }}
+            <div class="chat-bubble"
+                x-data
+                x-init="
+                    const jsonString = JSON.parse(document.getElementById('{{ message_id }}').textContent);
+                    $el.innerHTML = markdownToHtml(jsonString);
+                ">
             </div>
         </div>
     {% endif %}
