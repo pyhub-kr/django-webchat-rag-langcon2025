@@ -1,18 +1,37 @@
-from django.views.generic import ListView
-from .models import TaxLawDocument
+from django.shortcuts import get_object_or_404, render
+from django.urls import reverse_lazy
+from django.views.generic import ListView, CreateView
+
+from .forms import RoomForm
+from .models import Room, TaxLawDocument
 
 
-# 템플릿에서의 URL Reverse 참조를 위해 빈 View 함수 정의
-def room_list(request):
-    pass
+# 채팅방 목록 페이지 (클래스 기반 뷰)
+room_list = ListView.as_view(model=Room)
 
 
-def room_new(request):
-    pass
+# 새 채팅방 생성 페이지 (클래스 기반 뷰)
+room_new = CreateView.as_view(
+    model=Room,
+    form_class=RoomForm,
+    success_url=reverse_lazy("chat:room_list"),
+)
 
 
+# 채팅방 채팅 페이지 (함수 기반 뷰)
 def room_detail(request, pk):
-    pass
+    # 지정 채팅방 조회하고, 데이터베이스에 없으면 404 오류 발생
+    room = get_object_or_404(Room, pk=pk)
+    # 지정 채팅방의 모든 대화 목록
+    message_list = room.message_set.all()
+    return render(
+        request,
+        "chat/room_detail.html",
+        {
+            "room": room,
+            "message_list": message_list,
+        },
+    )
 
 
 # 문서 검색 페이지
